@@ -1,0 +1,8 @@
+#Ignore .vscode folder
+.vscode
+
+#Ignore executables
+*.out
+
+#Ignore test file
+test.cpp
