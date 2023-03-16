@@ -1,4 +1,5 @@
 #include <iostream>
+#include <tgmath.h>
 #include <boost/program_options.hpp>
 
 using namespace std;
@@ -6,40 +7,73 @@ using namespace std;
 class ShallowWater
 {
 public:
-    void SetParameters(int argc, char** argv)
+    void SetParameters(int argc, char **argv)
     {
         namespace po = boost::program_options;
 
         po::options_description desc("Allowed options");
-        desc.add_options()
-            ("dt", po::value<double>(&dt), "Time-step to use.")
-            ("T", po::value<double>(&T), "Total integration time.")
-            ("Nx", po::value<int>(&Nx), "Number of grid points in x")
-            ("Ny", po::value<int>(&Ny), "Number of grid points in y")
-            ("ix", po::value<int>(&ic), "Index of the initial condition to use (1-4)");
+        desc.add_options()("dt", po::value<double>(&dt), "Time-step to use.")("T", po::value<double>(&T), "Total integration time.")("Nx", po::value<int>(&Nx), "Number of grid points in x")("Ny", po::value<int>(&Ny), "Number of grid points in y")("ic", po::value<int>(&ic), "Index of the initial condition to use (1-4)");
 
         po::variables_map vm;
         po::store(po::parse_command_line(argc, argv, desc), vm);
         po::notify(vm);
 
-    }
-    void print()
-    {
-        cout << "dt = " << dt << endl;
-        cout << "T = " << T << endl;
-        cout << "Nx = " << Nx << endl;
-        cout << "Ny = " << Ny << endl;
-        cout << "ic = " << ic << endl;
+        U = new double[Nx * Ny];
+        V = new double[Nx * Ny];
+        H = new double[Nx * Ny];
     }
     void SetInitialConditions()
     {
-        return;
+        if (ic == 1)
+        {
+            for (int i = 0; i < Nx; ++i)
+            {
+                for (int j = 0; j < Ny; ++j)
+                {
+                    H[i + Ny * j] = 10 + exp(-pow(i - 50, 2) / 25);
+                }
+            }
+        }
+        else if (ic == 2)
+        {
+            for (int i = 0; i < Nx; ++i)
+            {
+                for (int j = 0; j < Ny; ++j)
+                {
+                    H[i + Ny * j] = 10 + exp(-pow(j - 50, 2) / 25);
+                }
+            }
+        }
+        else if (ic == 3)
+        {
+            for (int i = 0; i < Nx; ++i)
+            {
+                for (int j = 0; j < Ny; ++j)
+                {
+                    H[i + Ny * j] = 10 + exp(-(pow(i - 50, 2) + pow(j - 50, 2)) / 25);
+                }
+            }
+        }
+        else if (ic == 4)
+        {
+            for (int i = 0; i < Nx; ++i)
+            {
+                for (int j = 0; j < Ny; ++j)
+                {
+                    H[i + Ny * j] = 10 + exp(-pow(i - 25, 2) / 25) + exp(-pow(j - 25, 2) / 25) + exp(-pow(i - 75, 2) / 25) + exp(-pow(j - 75, 2) / 25);
+                }
+            }
+        }
+        else
+        {
+            cout << "Invalid initial condition" << endl;
+        }
     }
-    void TimeIntegrate()
+    void BlasDerivativeX()
     {
         return;
     }
-    void BlasDerivativeX()
+    void BlasDerivativeY()
     {
         return;
     }
@@ -90,7 +124,7 @@ public:
 
             out[Ny * (col + 1) - 2] = -in[Ny * (col + 1) - 5] / 60 + 3 * in[Ny * (col + 1) - 4] / 20 - 3 * in[Ny * (col + 1) - 3] / 4 +
                                       3 * in[Ny * (col + 1) - 1] / 4 - 3 * in[Ny * col] / 20 + in[Ny * col + 1] / 60;
-                                      
+
             out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] / 60 + 3 * in[Ny * (col + 1) - 3] / 20 - 3 * in[Ny * (col + 1) - 2] / 4 +
                                       3 * in[Ny * col] / 4 - 3 * in[Ny * col + 1] / 20 + in[Ny * col + 2] / 60;
 
@@ -101,6 +135,35 @@ public:
             }
         }
     }
+    void TimeIntegrate()
+    {
+        
+    }
+    void print()
+    {
+        cout << "dt = " << dt << endl;
+        cout << "T = " << T << endl;
+        cout << "Nx = " << Nx << endl;
+        cout << "Ny = " << Ny << endl;
+        cout << "ic = " << ic << endl;
+    }
+
+    void printmatrix(double *matrix)
+    {
+        for (int i = 0; i < Nx; i++)
+        {
+            for (int j = 0; j < Ny; j++)
+            {
+                cout << matrix[i + Ny * j] << ' ';
+            }
+            cout << endl;
+        }
+    }
+
+    double *getH()
+    {
+        return H;
+    }
 
 private:
     double dt;
@@ -108,26 +171,22 @@ private:
     int Nx;
     int Ny;
     int ic;
-    double *U = new double[Nx * Ny];
+    double *U;
     double *V;
     double *H;
 };
 
-void printmatrix(double *matrix, int n1, int n2)
-{
-    for (int i = 0; i < n2; i++)
-    {
-        for (int j = 0; j < n1; j++)
-        {
-            cout << matrix[i + n2 * j] << ' ';
-        }
-        cout << endl;
-    }
-}
 
-int main(int argc, char** argv)
+
+int main(int argc, char **argv)
 {
     ShallowWater obj;
+
     obj.SetParameters(argc, argv);
+
     obj.print();
+
+    obj.SetInitialConditions();
+
+    obj.printmatrix(obj.getH());
 }
