@@ -69,11 +69,33 @@ public:
             cout << "Invalid initial condition" << endl;
         }
     }
-    void BlasDerivativeX()
+    void xDerivative(char type, double *in, double *out)
+    {
+        if (type == 'B')
+        {
+            BlasDerivativeX(in, out);
+        }
+        else if (type == 'L')
+        {
+            LoopDerivativeX(in, out);
+        }
+    }
+    void yDerivative(char type, double *in, double *out)
+    {
+        if (type == 'B')
+        {
+            BlasDerivativeY(in, out);
+        }
+        else if (type == 'L')
+        {
+            LoopDerivativeY(in, out);
+        }
+    }
+    void BlasDerivativeX(double *in, double *out)
     {
         return;
     }
-    void BlasDerivativeY()
+    void BlasDerivativeY(double *in, double *out)
     {
         return;
     }
@@ -137,7 +159,7 @@ public:
     }
     void TimeIntegrate()
     {
-        
+        return;
     }
     void print()
     {
@@ -175,8 +197,6 @@ private:
     double *V;
     double *H;
 };
-
-
 
 int main(int argc, char **argv)
 {
