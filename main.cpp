@@ -1,15 +1,37 @@
 #include <iostream>
+#include <boost/program_options.hpp>
 
 using namespace std;
 
 class ShallowWater
 {
 public:
-    void SetInitialConditions()
+    void SetParameters(int argc, char** argv)
     {
-        return;
+        namespace po = boost::program_options;
+
+        po::options_description desc("Allowed options");
+        desc.add_options()
+            ("dt", po::value<double>(&dt), "Time-step to use.")
+            ("T", po::value<double>(&T), "Total integration time.")
+            ("Nx", po::value<int>(&Nx), "Number of grid points in x")
+            ("Ny", po::value<int>(&Ny), "Number of grid points in y")
+            ("ix", po::value<int>(&ic), "Index of the initial condition to use (1-4)");
+
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+
     }
-    void SetParameters()
+    void print()
+    {
+        cout << "dt = " << dt << endl;
+        cout << "T = " << T << endl;
+        cout << "Nx = " << Nx << endl;
+        cout << "Ny = " << Ny << endl;
+        cout << "ic = " << ic << endl;
+    }
+    void SetInitialConditions()
     {
         return;
     }
@@ -56,14 +78,19 @@ public:
         {
             out[Ny * col] = -in[Ny * (col + 1) - 3] / 60 + 3 * in[Ny * (col + 1) - 2] / 20 - 3 * in[Ny * (col + 1) - 1] / 4 +
                             3 * in[Ny * col + 1] / 4 - 3 * in[Ny * col + 2] / 20 + in[Ny * col + 3] / 60;
+
             out[Ny * col + 1] = -in[Ny * (col + 1) - 2] / 60 + 3 * in[Ny * (col + 1) - 1] / 20 - 3 * in[Ny * col] / 4 +
                                 3 * in[Ny * col + 2] / 4 - 3 * in[Ny * col + 3] / 20 + in[Ny * col + 4] / 60;
+
             out[Ny * col + 2] = -in[Ny * (col + 1) - 1] / 60 + 3 * in[Ny * col] / 20 - 3 * in[Ny * col + 1] / 4 +
                                 3 * in[Ny * col + 3] / 4 - 3 * in[Ny * col + 4] / 20 + in[Ny * col + 5] / 60;
+
             out[Ny * (col + 1) - 3] = -in[Ny * (col + 1) - 6] / 60 + 3 * in[Ny * (col + 1) - 5] / 20 - 3 * in[Ny * (col + 1) - 4] / 4 +
                                       3 * in[Ny * (col + 1) - 2] / 4 - 3 * in[Ny * (col + 1) - 1] / 20 + in[Ny * col] / 60;
+
             out[Ny * (col + 1) - 2] = -in[Ny * (col + 1) - 5] / 60 + 3 * in[Ny * (col + 1) - 4] / 20 - 3 * in[Ny * (col + 1) - 3] / 4 +
                                       3 * in[Ny * (col + 1) - 1] / 4 - 3 * in[Ny * col] / 20 + in[Ny * col + 1] / 60;
+                                      
             out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] / 60 + 3 * in[Ny * (col + 1) - 3] / 20 - 3 * in[Ny * (col + 1) - 2] / 4 +
                                       3 * in[Ny * col] / 4 - 3 * in[Ny * col + 1] / 20 + in[Ny * col + 2] / 60;
 
@@ -76,40 +103,15 @@ public:
     }
 
 private:
-    double dt = 0.001;
-    double T = 10;
-    int Nx = 100;
-    int Ny = 100;
+    double dt;
+    double T;
+    int Nx;
+    int Ny;
     int ic;
-    double *U;
+    double *U = new double[Nx * Ny];
     double *V;
     double *H;
 };
-
-void LoopDerivativeX(double *in, double *out, int Nx, int Ny)
-{
-    for (int col = 0; col < Nx; ++col)
-        {
-            out[Ny * col] = -in[Ny * (col + 1) - 3] / 60 + 3 * in[Ny * (col + 1) - 2] / 20 - 3 * in[Ny * (col + 1) - 1] / 4 +
-                            3 * in[Ny * col + 1] / 4 - 3 * in[Ny * col + 2] / 20 + in[Ny * col + 3] / 60;
-            out[Ny * col + 1] = -in[Ny * (col + 1) - 2] / 60 + 3 * in[Ny * (col + 1) - 1] / 20 - 3 * in[Ny * col] / 4 +
-                                3 * in[Ny * col + 2] / 4 - 3 * in[Ny * col + 3] / 20 + in[Ny * col + 4] / 60;
-            out[Ny * col + 2] = -in[Ny * (col + 1) - 1] / 60 + 3 * in[Ny * col] / 20 - 3 * in[Ny * col + 1] / 4 +
-                                3 * in[Ny * col + 3] / 4 - 3 * in[Ny * col + 4] / 20 + in[Ny * col + 5] / 60;
-            out[Ny * (col + 1) - 3] = -in[Ny * (col + 1) - 6] / 60 + 3 * in[Ny * (col + 1) - 5] / 20 - 3 * in[Ny * (col + 1) - 4] / 4 +
-                                      3 * in[Ny * (col + 1) - 2] / 4 - 3 * in[Ny * (col + 1) - 1] / 20 + in[Ny * col] / 60;
-            out[Ny * (col + 1) - 2] = -in[Ny * (col + 1) - 5] / 60 + 3 * in[Ny * (col + 1) - 4] / 20 - 3 * in[Ny * (col + 1) - 3] / 4 +
-                                      3 * in[Ny * (col + 1) - 1] / 4 - 3 * in[Ny * col] / 20 + in[Ny * col + 1] / 60;
-            out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] / 60 + 3 * in[Ny * (col + 1) - 3] / 20 - 3 * in[Ny * (col + 1) - 2] / 4 +
-                                      3 * in[Ny * col] / 4 - 3 * in[Ny * col + 1] / 20 + in[Ny * col + 2] / 60;
-
-            for (int row = 3; row < Ny - 3; ++row)
-            {
-                out[row + Ny * col] = -in[row - 3 + Ny * col] / 60 + 3 * in[row - 2 + Ny * col] / 20 - 3 * in[row - 1 + Ny * col] / 4 +
-                                      3 * in[row + 1 + Ny * col] / 4 - 3 * in[row + 2 + Ny * col] / 20 + in[row + 3 + Ny * col] / 60;
-            }
-        }
-}
 
 void printmatrix(double *matrix, int n1, int n2)
 {
@@ -123,18 +125,9 @@ void printmatrix(double *matrix, int n1, int n2)
     }
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    double *in = new double[150];
-    double *out = new double[150];
-
-    for (int i = 0; i < 150; ++i)
-    {
-        in[i] = 1;
-    }
-
-    LoopDerivativeX(in, out, 15, 10);
-
-    printmatrix(in, 15,10);
-    printmatrix(out, 15,10);
+    ShallowWater obj;
+    obj.SetParameters(argc, argv);
+    obj.print();
 }
