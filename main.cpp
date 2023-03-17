@@ -314,7 +314,6 @@ public:
             }
         }
     }
-
     void output() 
     {
         ofstream out("output.txt", ios::out | ios::trunc);
@@ -331,32 +330,6 @@ public:
         out.close();
     }
 
-    void print()
-    {
-        cout << "dt = " << dt << endl;
-        cout << "T = " << T << endl;
-        cout << "Nx = " << Nx << endl;
-        cout << "Ny = " << Ny << endl;
-        cout << "ic = " << ic << endl;
-    }
-
-    void printmatrix(double *matrix)
-    {
-        for (int i = 0; i < Nx; i++)
-        {
-            for (int j = 0; j < Ny; j++)
-            {
-                cout << matrix[i + Ny * j] << ' ';
-            }
-            cout << endl;
-        }
-    }
-
-    double *getH()
-    {
-        return H;
-    }
-
 private:
     double dt;
     double T;
@@ -370,17 +343,13 @@ private:
 
 int main(int argc, char **argv)
 {
-    ShallowWater obj;
+    ShallowWater wave;
 
-    obj.SetParameters(argc, argv);
+    wave.SetParameters(argc, argv);
 
-    obj.print();
+    wave.SetInitialConditions();
 
-    obj.SetInitialConditions();
+    wave.TimeIntegrate('L');
 
-    obj.TimeIntegrate('L');
-
-    obj.printmatrix(obj.getH());
-
-    obj.output();
+    wave.output();
 }
