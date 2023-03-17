@@ -4,5 +4,8 @@
 #Ignore executables
 *.out
 
+#Ignore text output files
+*.txt
+
 #Ignore test file
 test.cpp
