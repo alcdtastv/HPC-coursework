@@ -314,13 +314,13 @@ public:
             }
         }
     }
-    void output() 
+    void output()
     {
         ofstream out("output.txt", ios::out | ios::trunc);
 
-        for (int i = 0; i<Ny; ++i) 
+        for (int i = 0; i < Ny; ++i)
         {
-            for (int j = 0; j<Nx; ++j) 
+            for (int j = 0; j < Nx; ++j)
             {
                 out << j << ' ' << i << ' ' << U[i + Ny * j] << ' ' << V[i + Ny * j] << ' ' << H[i + Ny * j] << endl;
             }
