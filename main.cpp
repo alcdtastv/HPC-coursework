@@ -105,7 +105,7 @@ public:
             {
                 for (int j = 0; j < Ny; ++j)
                 {
-                    H[i + Ny * j] = 10 + exp(-pow(i - 25, 2) / 25) + exp(-pow(j - 25, 2) / 25) + exp(-pow(i - 75, 2) / 25) + exp(-pow(j - 75, 2) / 25);
+                    H[i + Ny * j] = 10 + exp(-(pow(i - 25, 2)+pow(j - 25, 2) )/ 25) + exp(-(pow(i - 75, 2)+pow(j - 75, 2) )/ 25);
                 }
             }
         }
