@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <tgmath.h>
 #include <boost/program_options.hpp>
+#include <omp.h>
 
 #define F77NAME(x) x##_
 
@@ -39,6 +40,7 @@ public:
         {
             stencil = new double[7 * Nx]; // defined as x stencil, transpose if calculating y derivative
 
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx; ++i)
             {
                 stencil[7 * i] = 1.0 / 60;
@@ -71,6 +73,7 @@ public:
     {
         if (ic == 1)
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx; ++i)
             {
                 for (int j = 0; j < Ny; ++j)
@@ -81,6 +84,7 @@ public:
         }
         else if (ic == 2)
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx; ++i)
             {
                 for (int j = 0; j < Ny; ++j)
@@ -91,6 +95,7 @@ public:
         }
         else if (ic == 3)
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx; ++i)
             {
                 for (int j = 0; j < Ny; ++j)
@@ -101,6 +106,7 @@ public:
         }
         else if (ic == 4)
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx; ++i)
             {
                 for (int j = 0; j < Ny; ++j)
@@ -118,6 +124,7 @@ public:
     {
         if (type == 'B')
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Ny; ++i)
             {
                 F77NAME(dgbmv)
@@ -133,30 +140,31 @@ public:
         }
         else if (type == 'L')
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int row = 0; row < Ny; ++row)
             {
-                out[row] = -in[(Nx - 3) * Ny + row] / 60 + 3 * in[(Nx - 2) * Ny + row] / 20 - 3 * in[(Nx - 1) * Ny + row] / 4 +
-                           3 * in[Ny + row] / 4 - 3 * in[2 * Ny + row] / 20 + in[3 * Ny + row] / 60;
+                out[row] = -in[(Nx - 3) * Ny + row] * 0.0166667 + in[(Nx - 2) * Ny + row] * 0.15 - in[(Nx - 1) * Ny + row] * 0.75 +
+                           in[Ny + row] * 0.75 - in[2 * Ny + row] * 0.15 + in[3 * Ny + row] * 0.0166667;
 
-                out[Ny + row] = -in[(Nx - 2) * Ny + row] / 60 + 3 * in[(Nx - 1) * Ny + row] / 20 - 3 * in[row] / 4 +
-                                3 * in[2 * Ny + row] / 4 - 3 * in[3 * Ny + row] / 20 + in[4 * Ny + row] / 60;
+                out[Ny + row] = -in[(Nx - 2) * Ny + row] * 0.0166667 + in[(Nx - 1) * Ny + row] * 0.15 - in[row] * 0.75 +
+                                in[2 * Ny + row] * 0.75 - in[3 * Ny + row] * 0.15 + in[4 * Ny + row] * 0.0166667;
 
-                out[2 * Ny + row] = -in[(Nx - 1) * Ny + row] / 60 + 3 * in[row] / 20 - 3 * in[Ny + row] / 4 +
-                                    3 * in[3 * Ny + row] / 4 - 3 * in[4 * Ny + row] / 20 + in[5 * Ny + row] / 60;
+                out[2 * Ny + row] = -in[(Nx - 1) * Ny + row] * 0.0166667 + in[row] * 0.15 - in[Ny + row] * 0.75 +
+                                    in[3 * Ny + row] * 0.75 - in[4 * Ny + row] * 0.15 + in[5 * Ny + row] * 0.0166667;
 
-                out[(Nx - 3) * Ny + row] = -in[(Nx - 6) * Ny + row] / 60 + 3 * in[(Nx - 5) * Ny + row] / 20 - 3 * in[(Nx - 4) * Ny + row] / 4 +
-                                           3 * in[(Nx - 2) * Ny + row] / 4 - 3 * in[(Nx - 1) * Ny + row] / 20 + in[row] / 60;
+                out[(Nx - 3) * Ny + row] = -in[(Nx - 6) * Ny + row] * 0.0166667 + in[(Nx - 5) * Ny + row] * 0.15 - in[(Nx - 4) * Ny + row] * 0.75 +
+                                           in[(Nx - 2) * Ny + row] * 0.75 - in[(Nx - 1) * Ny + row] * 0.15 + in[row] * 0.0166667;
 
-                out[(Nx - 2) * Ny + row] = -in[(Nx - 5) * Ny + row] / 60 + 3 * in[(Nx - 4) * Ny + row] / 20 - 3 * in[(Nx - 3) * Ny + row] / 4 +
-                                           3 * in[(Nx - 1) * Ny + row] / 4 - 3 * in[row] / 20 + in[Ny + row] / 60;
+                out[(Nx - 2) * Ny + row] = -in[(Nx - 5) * Ny + row] * 0.0166667 + in[(Nx - 4) * Ny + row] * 0.15 - in[(Nx - 3) * Ny + row] * 0.75 +
+                                           in[(Nx - 1) * Ny + row] * 0.75 - in[row] * 0.15 + in[Ny + row] * 0.0166667;
 
-                out[(Nx - 1) * Ny + row] = -in[(Nx - 4) * Ny + row] / 60 + 3 * in[(Nx - 3) * Ny + row] / 20 - 3 * in[(Nx - 2) * Ny + row] / 4 +
-                                           3 * in[row] / 4 - 3 * in[Ny + row] / 20 + in[2 * Ny + row] / 60;
+                out[(Nx - 1) * Ny + row] = -in[(Nx - 4) * Ny + row] * 0.0166667 + in[(Nx - 3) * Ny + row] * 0.15 - in[(Nx - 2) * Ny + row] * 0.75 +
+                                           in[row] * 0.75 - in[Ny + row] * 0.15 + in[2 * Ny + row] * 0.0166667;
 
                 for (int col = 3; col < Nx - 3; ++col)
                 {
-                    out[row + Ny * col] = -in[row + Ny * (col - 3)] / 60 + 3 * in[row + Ny * (col - 2)] / 20 - 3 * in[row + Ny * (col - 1)] / 4 +
-                                          3 * in[row + Ny * (col + 1)] / 4 - 3 * in[row + Ny * (col + 2)] / 20 + in[row + Ny * (col + 3)] / 60;
+                    out[row + Ny * col] = -in[row + Ny * (col - 3)] * 0.0166667 + in[row + Ny * (col - 2)] * 0.15 - in[row + Ny * (col - 1)] * 0.75 +
+                                          in[row + Ny * (col + 1)] * 0.75 - in[row + Ny * (col + 2)] *0.15 + in[row + Ny * (col + 3)] * 0.0166667;
                 }
             }
         }
@@ -165,6 +173,7 @@ public:
     {
         if (type == 'B')
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Ny; ++i)
             {
                 F77NAME(dgbmv)
@@ -180,30 +189,31 @@ public:
         }
         else if (type == 'L')
         {
+            #pragma omp parallel for default(shared) schedule(static)
             for (int col = 0; col < Nx; ++col)
             {
-                out[Ny * col] = -in[Ny * (col + 1) - 3] / 60 + 3 * in[Ny * (col + 1) - 2] / 20 - 3 * in[Ny * (col + 1) - 1] / 4 +
-                                3 * in[Ny * col + 1] / 4 - 3 * in[Ny * col + 2] / 20 + in[Ny * col + 3] / 60;
+                out[Ny * col] = -in[Ny * (col + 1) - 3] * 0.0166667 + in[Ny * (col + 1) - 2] * 0.15 - in[Ny * (col + 1) - 1] * 0.75 +
+                                in[Ny * col + 1] * 0.75 - in[Ny * col + 2] * 0.15 + in[Ny * col + 3] * 0.0166667;
 
-                out[Ny * col + 1] = -in[Ny * (col + 1) - 2] / 60 + 3 * in[Ny * (col + 1) - 1] / 20 - 3 * in[Ny * col] / 4 +
-                                    3 * in[Ny * col + 2] / 4 - 3 * in[Ny * col + 3] / 20 + in[Ny * col + 4] / 60;
+                out[Ny * col + 1] = -in[Ny * (col + 1) - 2] * 0.0166667 + in[Ny * (col + 1) - 1] * 0.15 - in[Ny * col] * 0.75 +
+                                    in[Ny * col + 2] * 0.75 - in[Ny * col + 3] * 0.15 + in[Ny * col + 4] * 0.0166667;
 
-                out[Ny * col + 2] = -in[Ny * (col + 1) - 1] / 60 + 3 * in[Ny * col] / 20 - 3 * in[Ny * col + 1] / 4 +
-                                    3 * in[Ny * col + 3] / 4 - 3 * in[Ny * col + 4] / 20 + in[Ny * col + 5] / 60;
+                out[Ny * col + 2] = -in[Ny * (col + 1) - 1] * 0.0166667 + in[Ny * col] * 0.15 - in[Ny * col + 1] * 0.75 +
+                                    in[Ny * col + 3] * 0.75 - in[Ny * col + 4] * 0.15 + in[Ny * col + 5] * 0.0166667;
 
-                out[Ny * (col + 1) - 3] = -in[Ny * (col + 1) - 6] / 60 + 3 * in[Ny * (col + 1) - 5] / 20 - 3 * in[Ny * (col + 1) - 4] / 4 +
-                                          3 * in[Ny * (col + 1) - 2] / 4 - 3 * in[Ny * (col + 1) - 1] / 20 + in[Ny * col] / 60;
+                out[Ny * (col + 1) - 3] = -in[Ny * (col + 1) - 6] * 0.0166667 + in[Ny * (col + 1) - 5] * 0.15 - in[Ny * (col + 1) - 4] * 0.75 +
+                                          in[Ny * (col + 1) - 2] * 0.75 - in[Ny * (col + 1) - 1] * 0.15 + in[Ny * col] * 0.0166667;
 
-                out[Ny * (col + 1) - 2] = -in[Ny * (col + 1) - 5] / 60 + 3 * in[Ny * (col + 1) - 4] / 20 - 3 * in[Ny * (col + 1) - 3] / 4 +
-                                          3 * in[Ny * (col + 1) - 1] / 4 - 3 * in[Ny * col] / 20 + in[Ny * col + 1] / 60;
+                out[Ny * (col + 1) - 2] = -in[Ny * (col + 1) - 5] * 0.0166667 + in[Ny * (col + 1) - 4] * 0.15 - in[Ny * (col + 1) - 3] * 0.75 +
+                                          in[Ny * (col + 1) - 1] * 0.75 - in[Ny * col] * 0.15 + in[Ny * col + 1] * 0.0166667;
 
-                out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] / 60 + 3 * in[Ny * (col + 1) - 3] / 20 - 3 * in[Ny * (col + 1) - 2] / 4 +
-                                          3 * in[Ny * col] / 4 - 3 * in[Ny * col + 1] / 20 + in[Ny * col + 2] / 60;
-
+                out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] * 0.0166667 + in[Ny * (col + 1) - 3] * 0.15 - in[Ny * (col + 1) - 2] * 0.75 +
+                                          in[Ny * col] * 0.75 - in[Ny * col + 1] * 0.15 + in[Ny * col + 2] * 0.0166667;
+                                          
                 for (int row = 3; row < Ny - 3; ++row)
                 {
-                    out[row + Ny * col] = -in[row - 3 + Ny * col] / 60 + 3 * in[row - 2 + Ny * col] / 20 - 3 * in[row - 1 + Ny * col] / 4 +
-                                          3 * in[row + 1 + Ny * col] / 4 - 3 * in[row + 2 + Ny * col] / 20 + in[row + 3 + Ny * col] / 60;
+                    out[row + Ny * col] = -in[row - 3 + Ny * col] * 0.0166667 + in[row - 2 + Ny * col] * 0.15 - in[row - 1 + Ny * col] * 0.75 +
+                                          in[row + 1 + Ny * col] * 0.75 - in[row + 2 + Ny * col] * 0.15 + in[row + 3 + Ny * col] * 0.0166667;
                 }
             }
         }
@@ -250,6 +260,7 @@ public:
         for (int j = 0; j < T / dt; ++j)
         {
             // Copying U, V, H to u, v, h (temp arrays) and calculating hu, hv
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 u[i] = U[i];
@@ -269,6 +280,7 @@ public:
             xDerivative(hu, dhudx);
             yDerivative(hv, dhvdy);
 
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k1u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
@@ -277,6 +289,7 @@ public:
             }
 
             // Calculating K2
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 u[i] = U[i] + k1u[i] * dt / 2;
@@ -295,6 +308,7 @@ public:
             xDerivative(hu, dhudx);
             yDerivative(hv, dhvdy);
 
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k2u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
@@ -303,6 +317,7 @@ public:
             }
 
             // Calculating K3
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 u[i] = U[i] + k2u[i] * dt / 2;
@@ -321,6 +336,7 @@ public:
             xDerivative(hu, dhudx);
             yDerivative(hv, dhvdy);
 
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k3u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
@@ -329,6 +345,7 @@ public:
             }
 
             // Calculating K4
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 u[i] = U[i] + k3u[i] * dt;
@@ -347,6 +364,7 @@ public:
             xDerivative(hu, dhudx);
             yDerivative(hv, dhvdy);
 
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k4u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
@@ -355,6 +373,7 @@ public:
             }
 
             // Calculating U, V, and H
+            #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 U[i] = U[i] + (k1u[i] + 2 * k2u[i] + 2 * k3u[i] + k4u[i]) * dt / 6;
@@ -396,6 +415,17 @@ private:
 
 int main(int argc, char **argv)
 {
+    int nthreads, threadid;
+    #pragma omp parallel private(threadid)
+    {
+        threadid = omp_get_thread_num();
+        if (threadid == 0)
+        {
+            nthreads = omp_get_num_threads();
+            cout << "Number of threads: " << nthreads << endl;
+        }
+    }
+    
     ShallowWater wave;
 
     wave.SetParameters(argc, argv);
