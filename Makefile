@@ -3,7 +3,7 @@ src = ./src
 obj = ./obj
 
 CXX = g++
-CXXFLAGS = -O3 -g -c
+CXXFLAGS = -O3 -Wall -g -c
 
 HDRS = $(src)/ShallowWater.h
 OBJS = $(obj)/main.o $(obj)/TimeIntegrate.o $(obj)/derivatives.o $(obj)/SetInitialConditions.o $(obj)/output.o $(obj)/SetParameters.o
@@ -19,7 +19,7 @@ $(bin)/main.out: $(OBJS)
 
 $(obj)/%.o: $(src)/%.cpp $(HDRS)
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) -o $@ -c $< -fopenmp
 
 test1: $(bin)/main.out
 	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 1 --type L
