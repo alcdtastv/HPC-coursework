@@ -1,12 +1,12 @@
 /**
  * @file derivatives.cpp
  * @author your name (you@domain.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-03-22
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include "ShallowWater.h"
@@ -41,14 +41,14 @@ void ShallowWater::xDerivative(double *in, double *out)
         for (int i = 0; i < Ny; ++i)
         {
             F77NAME(dgbmv)
-            ('N', Nx, Nx, 3, 3, 1.0, stencil, 7, in + i, Nx, 0, out + i, Nx);
+            ('N', Nx, Nx, 3, 3, 1.0, stencil, 7, in + i, Ny, 0, out + i, Ny);
 
-            out[i] += F77NAME(ddot)(Nx, extrarowstencil + 5, 1, in + i, Nx);
-            out[i + Ny] += F77NAME(ddot)(Nx, extrarowstencil + 4, 1, in + i, Nx);
-            out[i + 2 * Ny] += F77NAME(ddot)(Nx, extrarowstencil + 3, 1, in + i, Nx);
-            out[i + Nx * (Ny - 3)] += F77NAME(ddot)(Nx, extrarowstencil + 2, 1, in + i, Nx);
-            out[i + Nx * (Ny - 2)] += F77NAME(ddot)(Nx, extrarowstencil + 1, 1, in + i, Nx);
-            out[i + Nx * (Ny - 1)] += F77NAME(ddot)(Nx, extrarowstencil, 1, in + i, Nx);
+            out[i] += F77NAME(ddot)(Nx, extrarowstencil + 5, 1, in + i, Ny);
+            out[i + Ny] += F77NAME(ddot)(Nx, extrarowstencil + 4, 1, in + i, Ny);
+            out[i + 2 * Ny] += F77NAME(ddot)(Nx, extrarowstencil + 3, 1, in + i, Ny);
+            out[i + Ny * (Nx - 3)] += F77NAME(ddot)(Nx, extrarowstencil + 2, 1, in + i, Ny);
+            out[i + Ny * (Nx - 2)] += F77NAME(ddot)(Nx, extrarowstencil + 1, 1, in + i, Ny);
+            out[i + Ny * (Nx - 1)] += F77NAME(ddot)(Nx, extrarowstencil, 1, in + i, Ny);
         }
     }
     else if (type == 'L')
@@ -89,7 +89,7 @@ void ShallowWater::yDerivative(double *in, double *out)
     if (type == 'B')
     {
         #pragma omp parallel for default(shared) schedule(static)
-        for (int i = 0; i < Ny; ++i)
+        for (int i = 0; i < Nx; ++i)
         {
             F77NAME(dgbmv)
             ('T', Ny, Ny, 3, 3, -1.0, stencil, 7, in + i * Ny, 1, 0, out + i * Ny, 1);
@@ -124,7 +124,7 @@ void ShallowWater::yDerivative(double *in, double *out)
 
             out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] * 0.0166667 + in[Ny * (col + 1) - 3] * 0.15 - in[Ny * (col + 1) - 2] * 0.75 +
                                       in[Ny * col] * 0.75 - in[Ny * col + 1] * 0.15 + in[Ny * col + 2] * 0.0166667;
-            
+
             #pragma omp simd
             for (int row = 3; row < Ny - 3; ++row)
             {

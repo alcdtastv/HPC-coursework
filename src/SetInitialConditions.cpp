@@ -1,12 +1,12 @@
 /**
  * @file SetInitialConditions.cpp
  * @author your name (you@domain.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-03-22
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include "ShallowWater.h"
@@ -24,44 +24,44 @@ void ShallowWater::SetInitialConditions()
     if (ic == 1)
     {
         #pragma omp parallel for default(shared) schedule(static)
-        for (int i = 0; i < Nx; ++i)
+        for (int row = 0; row < Ny; ++row)
         {
-            for (int j = 0; j < Ny; ++j)
+            for (int col = 0; col < Nx; ++col)
             {
-                H[i + Ny * j] = 10 + exp(-pow(i - 50, 2) / 25);
+                H[row + Ny * col] = 10 + exp(-pow(col - 50, 2) / 25);
             }
         }
     }
     else if (ic == 2)
     {
         #pragma omp parallel for default(shared) schedule(static)
-        for (int i = 0; i < Nx; ++i)
+        for (int row = 0; row < Ny; ++row)
         {
-            for (int j = 0; j < Ny; ++j)
+            for (int col = 0; col < Nx; ++col)
             {
-                H[i + Ny * j] = 10 + exp(-pow(j - 50, 2) / 25);
+                H[row + Ny * col] = 10 + exp(-pow(row - 50, 2) / 25);
             }
         }
     }
     else if (ic == 3)
     {
         #pragma omp parallel for default(shared) schedule(static)
-        for (int i = 0; i < Nx; ++i)
+        for (int row = 0; row < Ny; ++row)
         {
-            for (int j = 0; j < Ny; ++j)
+            for (int col = 0; col < Nx; ++col)
             {
-                H[i + Ny * j] = 10 + exp(-(pow(i - 50, 2) + pow(j - 50, 2)) / 25);
+                H[row + Ny * col] = 10 + exp(-(pow(row - 50, 2) + pow(col - 50, 2)) / 25);
             }
         }
     }
     else if (ic == 4)
     {
         #pragma omp parallel for default(shared) schedule(static)
-        for (int i = 0; i < Nx; ++i)
+        for (int row = 0; row < Ny; ++row)
         {
-            for (int j = 0; j < Ny; ++j)
+            for (int col = 0; col < Nx; ++col)
             {
-                H[i + Ny * j] = 10 + exp(-(pow(i - 25, 2) + pow(j - 25, 2)) / 25) + exp(-(pow(i - 75, 2) + pow(j - 75, 2)) / 25);
+                H[row + Ny * col] = 10 + exp(-(pow(col - 25, 2) + pow(row - 25, 2)) / 25) + exp(-(pow(col - 75, 2) + pow(row - 75, 2)) / 25);
             }
         }
     }

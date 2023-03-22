@@ -1,12 +1,12 @@
 /**
  * @file SetParameters.cpp
  * @author your name (you@domain.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-03-22
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include "ShallowWater.h"
@@ -38,10 +38,20 @@ ShallowWater::ShallowWater(int argc, char **argv)
 
     if (type == 'B')
     {
-        stencil = new double[7 * Ny]; // defined as x stencil, transpose if calculating y derivative
+        int temp;
+        if (Nx > Ny)
+        {
+            temp = Nx;
+        }
+        else
+        {
+            temp = Ny;
+        }
+
+        stencil = new double[7 * temp]; // defined as x stencil, transpose if calculating y derivative
 
         #pragma omp parallel for default(shared) schedule(static)
-        for (int i = 0; i < Nx; ++i)
+        for (int i = 0; i < temp; ++i)
         {
             stencil[7 * i] = 1.0 / 60;
             stencil[7 * i + 1] = -3.0 / 20;
