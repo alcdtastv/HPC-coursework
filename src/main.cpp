@@ -19,7 +19,7 @@ using namespace std;
 int main(int argc, char **argv)
 {
     int nthreads, threadid;
-#pragma omp parallel private(threadid)
+    #pragma omp parallel private(threadid)
     {
         threadid = omp_get_thread_num();
         if (threadid == 0)
@@ -29,9 +29,7 @@ int main(int argc, char **argv)
         }
     }
 
-    ShallowWater wave;
-
-    wave.SetParameters(argc, argv);
+    ShallowWater wave(argc, argv);
 
     wave.SetInitialConditions();
 

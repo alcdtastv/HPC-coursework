@@ -21,7 +21,7 @@ using namespace std;
  * @param argv
  */
 
-void ShallowWater::SetParameters(int argc, char **argv)
+ShallowWater::ShallowWater(int argc, char **argv)
 {
     namespace po = boost::program_options;
 
@@ -38,7 +38,7 @@ void ShallowWater::SetParameters(int argc, char **argv)
 
     if (type == 'B')
     {
-        stencil = new double[7 * Nx]; // defined as x stencil, transpose if calculating y derivative
+        stencil = new double[7 * Ny]; // defined as x stencil, transpose if calculating y derivative
 
         #pragma omp parallel for default(shared) schedule(static)
         for (int i = 0; i < Nx; ++i)
@@ -67,5 +67,19 @@ void ShallowWater::SetParameters(int argc, char **argv)
         extracolumnstencil[Ny + 2] = -1.0 / 60;
         extracolumnstencil[Ny + 3] = 3.0 / 20;
         extracolumnstencil[Ny + 4] = -3.0 / 4;
+    }
+}
+
+ShallowWater::~ShallowWater()
+{
+    delete[] U;
+    delete[] V;
+    delete[] H;
+
+    if (type == 'B')
+    {
+        delete[] stencil;
+        delete[] extrarowstencil;
+        delete[] extracolumnstencil;
     }
 }

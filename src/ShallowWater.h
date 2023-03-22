@@ -23,7 +23,9 @@ using namespace std;
 class ShallowWater
 {
 public:
-    void SetParameters(int argc, char **argv);
+    ShallowWater(int argc, char **argv);
+    
+    ~ShallowWater();
 
     void SetInitialConditions();
 

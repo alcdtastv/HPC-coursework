@@ -26,8 +26,6 @@ void ShallowWater::TimeIntegrate()
         double *u = new double[Nx * Ny];
         double *v = new double[Nx * Ny];
         double *h = new double[Nx * Ny];
-        // double *hu = new double[Nx * Ny];
-        // double *hv = new double[Nx * Ny];
 
         double *dudx = new double[Nx * Ny];
         double *dudy = new double[Nx * Ny];
@@ -37,9 +35,6 @@ void ShallowWater::TimeIntegrate()
 
         double *dhdx = new double[Nx * Ny];
         double *dhdy = new double[Nx * Ny];
-
-        // double *dhudx = new double[Nx * Ny];
-        // double *dhvdy = new double[Nx * Ny];
 
         double *k1u = new double[Nx * Ny];
         double *k1v = new double[Nx * Ny];
@@ -68,8 +63,6 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i];
                 v[i] = V[i];
                 h[i] = H[i];
-                // hu[i] = H[i] * U[i];
-                // hv[i] = H[i] * V[i];
             }
 
             // Calculating K1
@@ -79,14 +72,10 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            // xDerivative(hu, dhudx);
-            // yDerivative(hv, dhvdy);
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
-                // dhudx[i] = u[i] * dhdx[i] + h[i] * dudx[i];
-                // dhvdy[i] = v[i] * dhdy[i] + h[i] * dvdy[i];
                 k1u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
                 k1v[i] = -u[i] * dvdx[i] - v[i] * dvdy[i] - g * dhdy[i];
                 k1h[i] = -(u[i] * dhdx[i] + h[i] * dudx[i]) - (v[i] * dhdy[i] + h[i] * dvdy[i]);
@@ -99,8 +88,6 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i] + k1u[i] * dt / 2;
                 v[i] = V[i] + k1v[i] * dt / 2;
                 h[i] = H[i] + k1h[i] * dt / 2;
-                // hu[i] = h[i] * u[i];
-                // hv[i] = h[i] * v[i];
             }
 
             xDerivative(u, dudx);
@@ -109,8 +96,6 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            // xDerivative(hu, dhudx);
-            // yDerivative(hv, dhvdy);
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
@@ -127,8 +112,6 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i] + k2u[i] * dt / 2;
                 v[i] = V[i] + k2v[i] * dt / 2;
                 h[i] = H[i] + k2h[i] * dt / 2;
-                // hu[i] = h[i] * u[i];
-                // hv[i] = h[i] * v[i];
             }
 
             xDerivative(u, dudx);
@@ -137,8 +120,6 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            // xDerivative(hu, dhudx);
-            // yDerivative(hv, dhvdy);a
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
@@ -155,8 +136,6 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i] + k3u[i] * dt;
                 v[i] = V[i] + k3v[i] * dt;
                 h[i] = H[i] + k3h[i] * dt;
-                // hu[i] = h[i] * u[i];
-                // hv[i] = h[i] * v[i];
             }
 
             xDerivative(u, dudx);
@@ -165,8 +144,6 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            // xDerivative(hu, dhudx);
-            // yDerivative(hv, dhvdy);
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
@@ -185,4 +162,36 @@ void ShallowWater::TimeIntegrate()
                 H[i] = H[i] + (k1h[i] + 2 * k2h[i] + 2 * k3h[i] + k4h[i]) * dt / 6;
             }
         }
+
+        //Cleaning
+
+        delete[] u;
+        delete[] v;
+        delete[] h;
+
+        delete[] dudx;
+        delete[] dudy;
+
+        delete[] dvdx;
+        delete[] dvdy;
+
+        delete[] dhdx;
+        delete[] dhdy;
+
+        delete[] k1u;
+        delete[] k1v;
+        delete[] k1h;
+
+        delete[] k2u;
+        delete[] k2v;
+        delete[] k2h;
+
+        delete[] k3u;
+        delete[] k3v;
+        delete[] k3h;
+
+        delete[] k4u;
+        delete[] k4v;
+        delete[] k4h;
+
     }

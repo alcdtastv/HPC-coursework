@@ -6,7 +6,7 @@ CXX = g++
 CXXFLAGS = -O3 -Wall -g -c
 
 HDRS = $(src)/ShallowWater.h
-OBJS = $(obj)/main.o $(obj)/TimeIntegrate.o $(obj)/derivatives.o $(obj)/SetInitialConditions.o $(obj)/output.o $(obj)/SetParameters.o
+OBJS = $(obj)/main.o $(obj)/TimeIntegrate.o $(obj)/derivatives.o $(obj)/SetInitialConditions.o $(obj)/output.o $(obj)/ConstructorDestructor.o
 LIBS = -lblas -lboost_program_options -fopenmp
 
 .PHONY = test1, test2, test3, test4, clean

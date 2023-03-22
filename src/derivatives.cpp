@@ -53,7 +53,7 @@ void ShallowWater::xDerivative(double *in, double *out)
     }
     else if (type == 'L')
     {
-        #pragma omp parallel for simd default(shared) schedule(static)
+        #pragma omp parallel for default(shared) schedule(static)
         for (int row = 0; row < Ny; ++row)
         {
             out[row] = -in[(Nx - 3) * Ny + row] * 0.0166667 + in[(Nx - 2) * Ny + row] * 0.15 - in[(Nx - 1) * Ny + row] * 0.75 +
@@ -104,7 +104,7 @@ void ShallowWater::yDerivative(double *in, double *out)
     }
     else if (type == 'L')
     {
-        #pragma omp parallel for simd default(shared) schedule(static)
+        #pragma omp parallel for default(shared) schedule(static)
         for (int col = 0; col < Nx; ++col)
         {
             out[Ny * col] = -in[Ny * (col + 1) - 3] * 0.0166667 + in[Ny * (col + 1) - 2] * 0.15 - in[Ny * (col + 1) - 1] * 0.75 +
