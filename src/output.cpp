@@ -3,18 +3,22 @@
 
 using namespace std;
 
+/**
+ * @brief Outputs the U, V and H values to output.txt, just afer their x and y coordinates.
+ *
+ */
 void ShallowWater::output()
+{
+    ofstream out("output.txt", ios::out | ios::trunc);
+
+    for (int j = 0; j < Ny; ++j)
     {
-        ofstream out("output.txt", ios::out | ios::trunc);
-
-        for (int j = 0; j < Ny; ++j)
+        for (int i = 0; i < Nx; ++i)
         {
-            for (int i = 0; i < Nx; ++i)
-            {
-                out << i << ' ' << j << ' ' << U[i + Ny * j] << ' ' << V[i + Ny * j] << ' ' << H[i + Ny * j] << endl;
-            }
-            out << endl;
+            out << i << ' ' << j << ' ' << U[i + Ny * j] << ' ' << V[i + Ny * j] << ' ' << H[i + Ny * j] << endl;
         }
-
-        out.close();
+        out << endl;
     }
+
+    out.close();
+}

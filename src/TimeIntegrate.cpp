@@ -3,14 +3,19 @@
 
 using namespace std;
 
+/**
+ * @brief Performs the time integration using Runge-Kutta.
+ * 
+ */
+
 void ShallowWater::TimeIntegrate()
     {
         // Initialising variables
         double *u = new double[Nx * Ny];
         double *v = new double[Nx * Ny];
         double *h = new double[Nx * Ny];
-        double *hu = new double[Nx * Ny];
-        double *hv = new double[Nx * Ny];
+        // double *hu = new double[Nx * Ny];
+        // double *hv = new double[Nx * Ny];
 
         double *dudx = new double[Nx * Ny];
         double *dudy = new double[Nx * Ny];
@@ -21,8 +26,8 @@ void ShallowWater::TimeIntegrate()
         double *dhdx = new double[Nx * Ny];
         double *dhdy = new double[Nx * Ny];
 
-        double *dhudx = new double[Nx * Ny];
-        double *dhvdy = new double[Nx * Ny];
+        // double *dhudx = new double[Nx * Ny];
+        // double *dhvdy = new double[Nx * Ny];
 
         double *k1u = new double[Nx * Ny];
         double *k1v = new double[Nx * Ny];
@@ -51,8 +56,8 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i];
                 v[i] = V[i];
                 h[i] = H[i];
-                hu[i] = H[i] * U[i];
-                hv[i] = H[i] * V[i];
+                // hu[i] = H[i] * U[i];
+                // hv[i] = H[i] * V[i];
             }
 
             // Calculating K1
@@ -62,15 +67,17 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            xDerivative(hu, dhudx);
-            yDerivative(hv, dhvdy);
+            // xDerivative(hu, dhudx);
+            // yDerivative(hv, dhvdy);
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
+                // dhudx[i] = u[i] * dhdx[i] + h[i] * dudx[i];
+                // dhvdy[i] = v[i] * dhdy[i] + h[i] * dvdy[i];
                 k1u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
                 k1v[i] = -u[i] * dvdx[i] - v[i] * dvdy[i] - g * dhdy[i];
-                k1h[i] = -dhudx[i] - dhvdy[i];
+                k1h[i] = -(u[i] * dhdx[i] + h[i] * dudx[i]) - (v[i] * dhdy[i] + h[i] * dvdy[i]);
             }
 
             // Calculating K2
@@ -80,8 +87,8 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i] + k1u[i] * dt / 2;
                 v[i] = V[i] + k1v[i] * dt / 2;
                 h[i] = H[i] + k1h[i] * dt / 2;
-                hu[i] = h[i] * u[i];
-                hv[i] = h[i] * v[i];
+                // hu[i] = h[i] * u[i];
+                // hv[i] = h[i] * v[i];
             }
 
             xDerivative(u, dudx);
@@ -90,15 +97,15 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            xDerivative(hu, dhudx);
-            yDerivative(hv, dhvdy);
+            // xDerivative(hu, dhudx);
+            // yDerivative(hv, dhvdy);
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k2u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
                 k2v[i] = -u[i] * dvdx[i] - v[i] * dvdy[i] - g * dhdy[i];
-                k2h[i] = -dhudx[i] - dhvdy[i];
+                k2h[i] = -(u[i] * dhdx[i] + h[i] * dudx[i]) - (v[i] * dhdy[i] + h[i] * dvdy[i]);
             }
 
             // Calculating K3
@@ -108,8 +115,8 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i] + k2u[i] * dt / 2;
                 v[i] = V[i] + k2v[i] * dt / 2;
                 h[i] = H[i] + k2h[i] * dt / 2;
-                hu[i] = h[i] * u[i];
-                hv[i] = h[i] * v[i];
+                // hu[i] = h[i] * u[i];
+                // hv[i] = h[i] * v[i];
             }
 
             xDerivative(u, dudx);
@@ -118,15 +125,15 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            xDerivative(hu, dhudx);
-            yDerivative(hv, dhvdy);
+            // xDerivative(hu, dhudx);
+            // yDerivative(hv, dhvdy);a
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k3u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
                 k3v[i] = -u[i] * dvdx[i] - v[i] * dvdy[i] - g * dhdy[i];
-                k3h[i] = -dhudx[i] - dhvdy[i];
+                k3h[i] = -(u[i] * dhdx[i] + h[i] * dudx[i]) - (v[i] * dhdy[i] + h[i] * dvdy[i]);
             }
 
             // Calculating K4
@@ -136,8 +143,8 @@ void ShallowWater::TimeIntegrate()
                 u[i] = U[i] + k3u[i] * dt;
                 v[i] = V[i] + k3v[i] * dt;
                 h[i] = H[i] + k3h[i] * dt;
-                hu[i] = h[i] * u[i];
-                hv[i] = h[i] * v[i];
+                // hu[i] = h[i] * u[i];
+                // hv[i] = h[i] * v[i];
             }
 
             xDerivative(u, dudx);
@@ -146,15 +153,15 @@ void ShallowWater::TimeIntegrate()
             yDerivative(v, dvdy);
             xDerivative(h, dhdx);
             yDerivative(h, dhdy);
-            xDerivative(hu, dhudx);
-            yDerivative(hv, dhvdy);
+            // xDerivative(hu, dhudx);
+            // yDerivative(hv, dhvdy);
 
             #pragma omp parallel for default(shared) schedule(static)
             for (int i = 0; i < Nx * Ny; ++i)
             {
                 k4u[i] = -u[i] * dudx[i] - v[i] * dudy[i] - g * dhdx[i];
                 k4v[i] = -u[i] * dvdx[i] - v[i] * dvdy[i] - g * dhdy[i];
-                k4h[i] = -dhudx[i] - dhvdy[i];
+                k4h[i] = -(u[i] * dhdx[i] + h[i] * dudx[i]) - (v[i] * dhdy[i] + h[i] * dvdy[i]);
             }
 
             // Calculating U, V, and H

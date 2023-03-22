@@ -3,34 +3,40 @@
 
 using namespace std;
 
+/**
+ * @class ShallowWater
+ * @brief Defines variables and methods to implement a shallow water equation solver.
+ *
+ */
+
 class ShallowWater
 {
 public:
     void SetParameters(int argc, char **argv);
-    
+
     void SetInitialConditions();
 
     void xDerivative(double *in, double *out);
-    
+
     void yDerivative(double *in, double *out);
-    
+
     void TimeIntegrate();
 
     void output();
 
 private:
-    double dt;
-    double T;
-    int Nx;
-    int Ny;
-    int ic;
-    char type;
-    double *U;
-    double *V;
-    double *H;
-    double *stencil;
-    double *extrarowstencil;
-    double *extracolumnstencil;
+    double dt;                  ///< Time step
+    double T;                   ///< Total integration time
+    int Nx;                     ///< Number of x grid points
+    int Ny;                     ///< Number of y grid points
+    int ic;                     ///< Initial condition selector
+    char type;                  ///< Loop or Blas selector
+    double *U;                  ///< X component of velocity
+    double *V;                  ///< Y component of velocity
+    double *H;                  ///< Height
+    double *stencil;            ///< Stencil for blas derivative calculation
+    double *extrarowstencil;    ///< Stencil for extra rows not accounted by the dgbmv operation
+    double *extracolumnstencil; ///< Stencil for extra columns not accounted by the dgbmv operation
 };
 
 #endif

@@ -14,6 +14,14 @@ extern "C"
     double F77NAME(ddot)(const int &n, const double *x, const int &incx, const double *y, const int &incy);
 }
 
+/**
+ * @brief Calculates the x derivative of the input array using a central differencing scheme, implemented both through blas
+ *        and loops (chosen based on the type class variable)
+ *
+ * @param in    Input array
+ * @param out   Output array
+ */
+
 void ShallowWater::xDerivative(double *in, double *out)
 {
     if (type == 'B')
@@ -55,6 +63,7 @@ void ShallowWater::xDerivative(double *in, double *out)
             out[(Nx - 1) * Ny + row] = -in[(Nx - 4) * Ny + row] * 0.0166667 + in[(Nx - 3) * Ny + row] * 0.15 - in[(Nx - 2) * Ny + row] * 0.75 +
                                        in[row] * 0.75 - in[Ny + row] * 0.15 + in[2 * Ny + row] * 0.0166667;
 
+            #pragma omp simd
             for (int col = 3; col < Nx - 3; ++col)
             {
                 out[row + Ny * col] = -in[row + Ny * (col - 3)] * 0.0166667 + in[row + Ny * (col - 2)] * 0.15 - in[row + Ny * (col - 1)] * 0.75 +
@@ -104,7 +113,8 @@ void ShallowWater::yDerivative(double *in, double *out)
 
             out[Ny * (col + 1) - 1] = -in[Ny * (col + 1) - 4] * 0.0166667 + in[Ny * (col + 1) - 3] * 0.15 - in[Ny * (col + 1) - 2] * 0.75 +
                                       in[Ny * col] * 0.75 - in[Ny * col + 1] * 0.15 + in[Ny * col + 2] * 0.0166667;
-
+            
+            #pragma omp simd
             for (int row = 3; row < Ny - 3; ++row)
             {
                 out[row + Ny * col] = -in[row - 3 + Ny * col] * 0.0166667 + in[row - 2 + Ny * col] * 0.15 - in[row - 1 + Ny * col] * 0.75 +
