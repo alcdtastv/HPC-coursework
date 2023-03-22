@@ -1,12 +1,19 @@
+/**
+ * @file output.cpp
+ * @author Luca Mazzotta
+ * @brief Outputs the U, V and H values to output.txt, just afer their x and y coordinates.
+ * @version 0.1
+ * @date 2023-03-22
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "ShallowWater.h"
 #include <fstream>
 
 using namespace std;
 
-/**
- * @brief Outputs the U, V and H values to output.txt, just afer their x and y coordinates.
- *
- */
 void ShallowWater::output()
 {
     ofstream out("output.txt", ios::out | ios::trunc);

@@ -1,3 +1,14 @@
+/**
+ * @file SetParameters.cpp
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-03-22
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "ShallowWater.h"
 #include <boost/program_options.hpp>
 

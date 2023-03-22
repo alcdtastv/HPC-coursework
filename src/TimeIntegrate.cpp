@@ -1,3 +1,15 @@
+/**
+ * @file TimeIntegrate.cpp
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-03-22
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
+
 #include "ShallowWater.h"
 #include <omp.h>
 
