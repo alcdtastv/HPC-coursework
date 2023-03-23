@@ -20,16 +20,16 @@ set tics font ", 16"
 
 
 set output "test1-3d.eps"
-splot "test1.txt" using 1:2:5
+splot "data/test1.txt" using 1:2:5
 
 set output "test2-3d.eps"
-splot "test2.txt" using 1:2:5
+splot "data/test2.txt" using 1:2:5
 
 set output "test3-3d.eps"
-splot "test3.txt" using 1:2:5
+splot "data/test3.txt" using 1:2:5
 
 set output "test4-3d.eps"
-splot "test4.txt" using 1:2:5
+splot "data/test4.txt" using 1:2:5
 
 
 #2D plots
@@ -49,13 +49,13 @@ set ylabel "Y" offset -2,0,0 font ",20"
 set tics font ", 20"
 
 set output "test1-2d.eps"
-splot "test1.txt" using 1:2:5
+splot "data/test1.txt" using 1:2:5
 
 set output "test2-2d.eps"
-splot "test2.txt" using 1:2:5
+splot "data/test2.txt" using 1:2:5
 
 set output "test3-2d.eps"
-splot "test3.txt" using 1:2:5
+splot "data/test3.txt" using 1:2:5
 
 set output "test4-2d.eps"
-splot "test4.txt" using 1:2:5
+splot "data/test4.txt" using 1:2:5
