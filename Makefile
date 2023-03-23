@@ -9,7 +9,7 @@ HDRS = $(src)/ShallowWater.h
 OBJS = $(obj)/main.o $(obj)/TimeIntegrate.o $(obj)/derivatives.o $(obj)/SetInitialConditions.o $(obj)/output.o $(obj)/ConstructorDestructor.o
 LIBS = -lblas -lboost_program_options -fopenmp
 
-.PHONY = test1, test2, test3, test4, clean
+.PHONY = test1, test2, test3, test4, clean, doc
 
 default: $(bin)/main.out
 
@@ -35,3 +35,6 @@ test4: $(bin)/main.out
 
 clean:
 	rm -rf obj bin
+
+doc:
+	doxygen Doxyfile
