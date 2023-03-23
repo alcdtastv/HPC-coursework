@@ -6,9 +6,6 @@ bin
 #Ignore executables
 *.out
 
-#Ignore text output files
-*.txt
-
 #Ignore slurm files
 *.slr
 
