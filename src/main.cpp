@@ -1,9 +1,8 @@
 /**
  * @file main.cpp
  * @author Luca Mazzotta (luca.mazzotta19@imperial.ac.uk)
- * @brief This program solves the shallow water equation using runge kutta and a central differencing scheme,
- *        implemented through both a loop * based method and blas.
- * @version 0.1
+ * @brief This file contains the main function of the shallow water equations solver.
+ * @version 1.0
  * @date 2023-03-20
  *
  * @copyright Copyright (c) 2023
@@ -15,6 +14,14 @@
 #include <iostream>
 
 using namespace std;
+
+/**
+ * @brief 
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 
 int main(int argc, char **argv)
 {

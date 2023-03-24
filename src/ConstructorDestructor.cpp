@@ -1,9 +1,9 @@
 /**
- * @file SetParameters.cpp
- * @author your name (you@domain.com)
- * @brief
- * @version 0.1
- * @date 2023-03-22
+ * @file ConstructorDestructor.cpp
+ * @author Luca Mazzotta (luca.mazzotta19@imperial.ac.uk)
+ * @brief This file contains the constructor and destructor of the ShallowWater class.
+ * @version 1.0
+ * @date 2023-03-20
  *
  * @copyright Copyright (c) 2023
  *
@@ -15,7 +15,7 @@
 using namespace std;
 
 /**
- * @brief Sets the parameters for the simulation based on the command line arguments.
+ * @brief Constructs the shallow water object and sets its parameters.
  *
  * @param argc
  * @param argv
@@ -26,7 +26,13 @@ ShallowWater::ShallowWater(int argc, char **argv)
     namespace po = boost::program_options;
 
     po::options_description desc("Allowed options");
-    desc.add_options()("dt", po::value<double>(&dt), "Time-step to use.")("T", po::value<double>(&T), "Total integration time.")("Nx", po::value<int>(&Nx), "Number of grid points in x")("Ny", po::value<int>(&Ny), "Number of grid points in y")("ic", po::value<int>(&ic), "Index of the initial condition to use (1-4)")("type", po::value<char>(&type), "Blas or Loop");
+    desc.add_options()
+    ("dt", po::value<double>(&dt), "Time-step to use.")
+    ("T", po::value<double>(&T), "Total integration time.")
+    ("Nx", po::value<int>(&Nx), "Number of grid points in x")
+    ("Ny", po::value<int>(&Ny), "Number of grid points in y")
+    ("ic", po::value<int>(&ic), "Index of the initial condition to use (1-4)")
+    ("type", po::value<char>(&type), "Blas or Loop");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -48,7 +54,7 @@ ShallowWater::ShallowWater(int argc, char **argv)
             temp = Ny;
         }
 
-        stencil = new double[7 * temp]; // defined as x stencil, transpose if calculating y derivative
+        stencil = new double[7 * temp]; // sized to the largest domain dimension
 
         #pragma omp parallel for default(shared) schedule(static)
         for (int i = 0; i < temp; ++i)
@@ -62,6 +68,7 @@ ShallowWater::ShallowWater(int argc, char **argv)
             stencil[7 * i + 6] = -1.0 / 60;
         }
 
+        // stencil to account for the row which cannot be computed by dgbmv
         extrarowstencil = new double[Nx + 5];
         extrarowstencil[0] = 3.0 / 4;
         extrarowstencil[1] = -3.0 / 20;
@@ -70,6 +77,7 @@ ShallowWater::ShallowWater(int argc, char **argv)
         extrarowstencil[Nx + 3] = 3.0 / 20;
         extrarowstencil[Nx + 4] = -3.0 / 4;
 
+        // stencil to account for the column which cannot be computed by dgbmv
         extracolumnstencil = new double[Ny + 5];
         extracolumnstencil[0] = 3.0 / 4;
         extracolumnstencil[1] = -3.0 / 20;

@@ -1,14 +1,13 @@
 /**
  * @file TimeIntegrate.cpp
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2023-03-22
+ * @author Luca Mazzotta (luca.mazzotta19@imperial.ac.uk)
+ * @brief This file contains the function to perform the time integration.
+ * @version 1.0
+ * @date 2023-03-20
  * 
  * @copyright Copyright (c) 2023
  * 
  */
-
 
 #include "ShallowWater.h"
 #include <omp.h>

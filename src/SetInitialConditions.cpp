@@ -1,9 +1,9 @@
 /**
  * @file SetInitialConditions.cpp
- * @author your name (you@domain.com)
- * @brief
- * @version 0.1
- * @date 2023-03-22
+ * @author Luca Mazzotta (luca.mazzotta19@imperial.ac.uk)
+ * @brief This file contains the function to set the initial conditions for the H array.
+ * @version 1.0
+ * @date 2023-03-20
  *
  * @copyright Copyright (c) 2023
  *
@@ -15,10 +15,12 @@
 #include <iostream>
 
 using namespace std;
+
 /**
  * @brief Sets initial conditions for the H array based on the ic class variable.
  *
  */
+
 void ShallowWater::SetInitialConditions()
 {
     if (ic == 1)

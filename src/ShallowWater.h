@@ -1,9 +1,9 @@
 /**
  * @file ShallowWater.h
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2023-03-22
+ * @author Luca Mazzotta (luca.mazzotta19@imperial.ac.uk)
+ * @brief This file contains the class definition of the ShallowWater class.
+ * @version 1.0
+ * @date 2023-03-20
  * 
  * @copyright Copyright (c) 2023
  * 

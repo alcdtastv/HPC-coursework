@@ -1,9 +1,9 @@
 /**
  * @file derivatives.cpp
- * @author your name (you@domain.com)
- * @brief
- * @version 0.1
- * @date 2023-03-22
+ * @author Luca Mazzotta (luca.mazzotta19@imperial.ac.uk)
+ * @brief This file contains the functions to calculate the x and y derivatives.
+ * @version 1.0
+ * @date 2023-03-20
  *
  * @copyright Copyright (c) 2023
  *
@@ -27,7 +27,7 @@ extern "C"
 
 /**
  * @brief Calculates the x derivative of the input array using a central differencing scheme, implemented both through blas
- *        and loops (chosen based on the type class variable)
+ *        and loops (chosen based on the type class variable).
  *
  * @param in    Input array
  * @param out   Output array
@@ -83,6 +83,14 @@ void ShallowWater::xDerivative(double *in, double *out)
         }
     }
 }
+
+/**
+ * @brief Calculates the y derivative of the input array using a central differencing scheme, implemented both through blas
+ *        and loops (chosen based on the type class variable).
+ * 
+ * @param in Input array
+ * @param out Output array
+ */
 
 void ShallowWater::yDerivative(double *in, double *out)
 {

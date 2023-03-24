@@ -34,7 +34,7 @@ test4: $(bin)/main.out
 	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 4 --type L
 
 clean:
-	rm -rf obj bin
+	rm -rf obj bin html latex
 
 doc:
 	doxygen Doxyfile
