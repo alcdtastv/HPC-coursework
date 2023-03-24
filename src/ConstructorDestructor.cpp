@@ -32,7 +32,7 @@ ShallowWater::ShallowWater(int argc, char **argv)
     ("Nx", po::value<int>(&Nx), "Number of grid points in x")
     ("Ny", po::value<int>(&Ny), "Number of grid points in y")
     ("ic", po::value<int>(&ic), "Index of the initial condition to use (1-4)")
-    ("type", po::value<char>(&type), "Blas or Loop");
+    ("type", po::value<char>(&type)->default_value('L'), "Blas or Loop");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);

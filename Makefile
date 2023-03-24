@@ -22,16 +22,16 @@ $(obj)/%.o: $(src)/%.cpp $(HDRS)
 	$(CXX) $(CXXFLAGS) -o $@ -c $< -fopenmp
 
 test1: $(bin)/main.out
-	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 1 --type L
+	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 1
 
 test2: $(bin)/main.out
-	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 2 --type L
+	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 2
 
 test3: $(bin)/main.out
-	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 3 --type L
+	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 3
 
 test4: $(bin)/main.out
-	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 4 --type L
+	./bin/main.out --dt 0.1 --T 80 --Nx 100 --Ny 100 --ic 4
 
 clean:
 	rm -rf obj bin html latex
